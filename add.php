@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/session.php';
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     header('Location: login.php');
     exit;
@@ -25,18 +25,21 @@ $category_options = [
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'] ?? '';
     $description = $_POST['description'] ?? '';
-    $price = $_POST['price'] ?? 0;
     $main_category = $_POST['main_category'] ?? '';
     $sub_category = $_POST['sub_category'] ?? '';
     $category = "$main_category - $sub_category";
 
-    if ($name && $price && $main_category && $sub_category) {
-        try {
-            $stmt = $pdo->prepare("INSERT INTO product (name, description, price, category) VALUES (?, ?, ?, ?)");
-            $stmt->execute([$name, $description, $price, $category]);
+    if ($name  && $main_category && $sub_category) {
+      
+            $stmt = $pdo->prepare("INSERT INTO product (name, description, category) VALUES (?, ?, ?)");
+            $stmt->execute([$name, $description, $category]);
             $id = $pdo->lastInsertId();
 
             if (!empty($_FILES['image']['tmp_name'])) {
+                 // 在這裡加入資料夾檢查
+    if (!is_dir('uploads')) {
+        mkdir('uploads', 0755, true);
+    }
                 $original_name = $_FILES['image']['name'];
                 $tmp = $_FILES['image']['tmp_name'];
                 $ext = strtolower(pathinfo($original_name, PATHINFO_EXTENSION));
@@ -54,9 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['message'] = '商品新增成功！';
             header('Location: index.php');
             exit;
-        } catch (Exception $e) {
-            $error = '新增失敗：' . $e->getMessage();
-        }
+       
     } else {
         $error = '請填寫所有欄位。';
     }
@@ -105,11 +106,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="mb-3">
             <label class="form-label">描述</label>
             <textarea name="description" class="form-control" rows="3"></textarea>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">價格</label>
-            <input type="number" name="price" step="0.01" class="form-control" required>
         </div>
 
         <div class="mb-3">

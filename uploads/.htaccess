@@ -1,0 +1,7 @@
+# 預設拒絕所有
+Require all denied
+
+# 只允許圖片
+<FilesMatch "\.(jpg|jpeg|png|gif|webp)$">
+    Require all granted
+</FilesMatch>

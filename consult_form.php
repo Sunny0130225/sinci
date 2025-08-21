@@ -1,27 +1,31 @@
 <?php
-session_start();
 require 'db.php';
+require_once __DIR__ . '/session.php'; // ✅ 統一 session 安全設定
 
-/* 產 CSRF token */
-if (empty($_SESSION['csrf'])) { $_SESSION['csrf'] = bin2hex(random_bytes(16)); }
-$csrf = $_SESSION['csrf'];
-
+$csrf = $_SESSION['csrf'] ?? '';
+if (!$csrf) {
+    header('Location: front.php');
+    exit;
+}
 $cart = $_SESSION['consult_cart'] ?? [];
-
 $items = [];
 $total_items = 0;
-
+// 在表單中加上數量上限
+const MAX_QTY = 999; // 與其他頁面保持一致
 if ($cart) {
   $ids = array_map('intval', array_keys($cart));
-  $in  = implode(',', array_fill(0, count($ids), '?'));
-  $stmt = $pdo->prepare("SELECT id, name, price, category FROM product WHERE id IN ($in)");
-  $stmt->execute($ids);
-  $rows = $stmt->fetchAll();
+  if (empty($ids)) {
+    $items = [];
+} else {
+    $in = implode(',', array_fill(0, count($ids), '?'));
+    $stmt = $pdo->prepare("SELECT id, name, category FROM product WHERE id IN ($in)");
+    $stmt->execute($ids);
+    $rows = $stmt->fetchAll();
   foreach ($rows as $r) {
     $qty = (int)$cart[$r['id']]['qty'];
     $total_items += $qty;
-    $items[] = ['id'=>$r['id'], 'name'=>$r['name'], 'price'=>$r['price'], 'category'=>$r['category'], 'qty'=>$qty];
-  }
+    $items[] = ['id'=>$r['id'], 'name'=>$r['name'], 'category'=>$r['category'], 'qty'=>$qty];
+  }}
 }
 ?>
 <!doctype html>
@@ -31,8 +35,23 @@ if ($cart) {
   <title>諮詢表單</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-content {
+            flex: 1;
+        }
+    </style>
 </head>
 <body class="bg-light">
+  <div class="main-content">
+  <nav class="navbar navbar-light  shadow-sm mb-3 px-3" style="background-color: #78affbff;">
+    <a class="navbar-brand" href="front.php">新彩商品目錄</a>
+</nav>
+
 <div class="container py-4">
   <h3 class="mb-3">諮詢表單</h3>
 
@@ -40,9 +59,10 @@ if ($cart) {
     <div class="alert alert-info">目前尚未加入任何商品。請回到<a href="front.php">商品頁</a>加入諮詢。</div>
   <?php else: ?>
     <!-- 清單可編輯 -->
-    <form method="post" action="consult_update_cart.php" class="card mb-3">
+    <form method="post" action="consult_update.php" class="card mb-3">
       <div class="card-header">已加入商品（共 <?= (int)$total_items ?> 件）</div>
       <div class="card-body">
+         <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf) ?>">
         <div class="table-responsive">
           <table class="table align-middle">
             <thead><tr><th>商品</th><th>分類</th><th style="width:120px">數量</th><th style="width:120px"></th></tr></thead>
@@ -52,10 +72,20 @@ if ($cart) {
                 <td><?= htmlspecialchars($it['name']) ?></td>
                 <td class="text-muted small"><?= htmlspecialchars($it['category']) ?></td>
                 <td>
-                  <input type="number" name="qty[<?= (int)$it['id'] ?>]" value="<?= (int)$it['qty'] ?>" min="1" class="form-control form-control-sm">
+                  <input type="number" name="qty[<?= (int)$it['id'] ?>]" value="<?= (int)$it['qty'] ?>" min="1" max="<?= MAX_QTY ?>"  class="form-control form-control-sm">
                 </td>
                 <td>
-                  <a class="btn btn-sm btn-outline-danger" href="consult_remove.php?id=<?= (int)$it['id'] ?>">移除</a>
+              <button
+                      type="submit"
+                      name="id"
+                      value="<?= (int)$it['id'] ?>"
+                      class="btn btn-sm btn-outline-danger"
+                      formaction="consult_delete.php"
+                      formmethod="post"
+                        >
+                        移除
+              </button>
+
                 </td>
               </tr>
               <?php endforeach; ?>
@@ -98,6 +128,26 @@ if ($cart) {
       </div>
     </form>
   <?php endif; ?>
+  <?php if (!empty($_SESSION['flash'])):
+  $flash = $_SESSION['flash'];
+  unset($_SESSION['flash']);
+?>
+<script src="assets/sweetAlert/sweetalert2.all.min.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', function () {
+    Swal.fire({
+      icon: <?= json_encode($flash['type'] ?? 'info') ?>,
+      title: <?= json_encode($flash['title'] ?? '') ?>,
+      text: <?= json_encode($flash['text'] ?? '') ?>,
+      timer: 1600,
+      showConfirmButton: true
+    });
+  });
+</script>
+<?php endif; ?>
+
+</div>
 </div>
 </body>
+<?php include 'footer.php'; ?>
 </html>

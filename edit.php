@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/session.php';
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     header('Location: login.php');
     exit;
@@ -44,37 +44,49 @@ list($main_category_selected, $sub_category_selected) = explode(' - ', $product[
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'] ?? '';
     $description = $_POST['description'] ?? '';
-    $price = $_POST['price'] ?? 0;
     $main_category = $_POST['main_category'] ?? '';
     $sub_category = $_POST['sub_category'] ?? '';
     $category = "$main_category - $sub_category";
 
-    if ($name && $price && isset($category_options[$main_category]) && in_array($sub_category, $category_options[$main_category])) {
-        try {
-            // 更新商品資料
-            $stmt = $pdo->prepare("UPDATE product SET name = ?, description = ?, price = ?, category = ? WHERE id = ?");
-            $stmt->execute([$name, $description, $price, $category, $id]);
+    if ($name && isset($category_options[$main_category]) && in_array($sub_category, $category_options[$main_category])) {
+        $success = true;
+        
+        // 更新商品資料
+        $stmt = $pdo->prepare("UPDATE product SET name = ?, description = ?, category = ? WHERE id = ?");
+        if (!$stmt->execute([$name, $description, $category, $id])) {
+            $success = false;
+            $error = '商品資料更新失敗';
+        }
 
-            // 處理圖片上傳
-            if (!empty($_FILES['image']['tmp_name'])) {
-                $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
-                $filename = "uploads/{$id}.{$ext}";
-                if (move_uploaded_file($_FILES['image']['tmp_name'], $filename)) {
-                    $stmt = $pdo->prepare("UPDATE product SET image = ? WHERE id = ?");
-                    $stmt->execute([$filename, $id]);
-                } else {
-                    echo "<script>console.error('❌ 圖片上傳失敗');</script>";
+        // 處理圖片上傳（如果有上傳檔案）
+        if ($success && !empty($_FILES['image']['tmp_name'])) {
+            // 在這裡加入資料夾檢查
+    if (!is_dir('uploads')) {
+        mkdir('uploads', 0755, true);
+    }
+            $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
+            $filename = "uploads/{$id}.{$ext}";
+            
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $filename)) {
+                $stmt = $pdo->prepare("UPDATE product SET image = ? WHERE id = ?");
+                if (!$stmt->execute([$filename, $id])) {
+                    $success = false;
+                    $error = '商品資料更新成功，但圖片路徑儲存失敗';
                 }
+            } else {
+                $success = false;
+                $error = '商品資料更新成功，但圖片上傳失敗';
             }
+        }
 
+        // 只有全部成功才跳轉
+        if ($success) {
             $_SESSION['message'] = '商品更新成功！';
             header("Location: index.php");
             exit;
-        } catch (Exception $e) {
-            $error = '更新失敗：' . $e->getMessage();
         }
     } else {
-        $error = '請填寫完整欄位。';
+        $error = '請填寫完整欄位';
     }
 }
 ?>
@@ -126,12 +138,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label class="form-label">描述</label>
             <textarea name="description" class="form-control" rows="3"><?= htmlspecialchars($product['description']) ?></textarea>
         </div>
-
-        <div class="mb-3">
-            <label class="form-label">價格</label>
-            <input type="number" name="price" step="0.01" class="form-control" required value="<?= htmlspecialchars($product['price']) ?>">
-        </div>
-
         <div class="mb-3">
             <label class="form-label">上傳新圖片（留空則不變）</label>
             <input type="file" name="image" accept="image/*" class="form-control">

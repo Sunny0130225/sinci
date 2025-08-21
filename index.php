@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/session.php';
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     header('Location: login.php');
     exit;
@@ -7,12 +7,10 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 
 require 'db.php';
 
-try {
+
     $stmt = $pdo->query("SELECT * FROM product ORDER BY id DESC");
     $products = $stmt->fetchAll();
-} catch (Exception $e) {
-    die("讀取失敗：" . $e->getMessage());
-}
+
 ?>
 
 <!DOCTYPE html>
@@ -31,12 +29,13 @@ try {
         <h2>後台商品管理</h2>
         <a href="logout.php" class="btn btn-outline-secondary">登出</a>
     </div>
-
+    
     <?php if (!empty($_SESSION['message'])): ?>
         <div class="alert alert-success"><?= htmlspecialchars($_SESSION['message']) ?></div>
         <?php unset($_SESSION['message']); ?>
-    <?php endif; ?>
-
+        <?php endif; ?>
+        
+        <a href="customers.php" class="btn btn-outline-primary mb-3">諮詢清單</a>
     <a href="add.php" class="btn btn-primary mb-3">➕ 新增商品</a>
 
     <div class="table-responsive">
@@ -47,7 +46,6 @@ try {
                     <th>分類</th>
                     <th>名稱</th>
                     <th>描述</th>
-                    <th>價格</th>
                     <th>圖片</th>
                     <th>操作</th>
                 </tr>
@@ -58,8 +56,12 @@ try {
                         <td class="text-center"><?= htmlspecialchars($p['id']) ?></td>
                         <td><?= htmlspecialchars($p['category']) ?></td>
                         <td><?= htmlspecialchars($p['name']) ?></td>
-                        <td><?= nl2br(htmlspecialchars($p['description'])) ?></td>
-                        <td class="text-end">NT$ <?= number_format($p['price'], 2) ?></td>
+                        <td>
+                            <div class="text-truncate" style="max-width: 36rem;"
+                                    title="<?= htmlspecialchars($p['description']) ?>">
+                                    <?= htmlspecialchars($p['description']) ?>
+                            </div>
+                        </td>
                         <td class="text-center">
     <?php if (!empty($p['image']) && file_exists($p['image'])): ?>
         <img src="<?= htmlspecialchars($p['image']) ?>" alt="商品圖片" style="height: 60px;">
