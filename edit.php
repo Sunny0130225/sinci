@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // 只有全部成功才跳轉
         if ($success) {
             $_SESSION['message'] = '商品更新成功！';
-            header("Location: index.php");
+            header("Location: back.php");
             exit;
         }
     } else {
@@ -151,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <button type="submit" class="btn btn-primary">更新商品</button>
-        <a href="index.php" class="btn btn-secondary">取消</a>
+        <a href="back.php" class="btn btn-secondary">取消</a>
     </form>
 </div>
 

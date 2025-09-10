@@ -11,7 +11,7 @@ if (empty($_SESSION['csrf']) || empty($_POST['csrf']) || !hash_equals($_SESSION[
 }
 
 $cart = $_SESSION['consult_cart'] ?? [];
-if (!$cart) { header('Location: front.php'); exit; }
+if (!$cart) { header('Location: index.php'); exit; }
 
 $name    = trim($_POST['name'] ?? '');
 $phone   = trim($_POST['phone'] ?? '');
@@ -74,13 +74,13 @@ try {
 
   // 與 consult_form.php 一致：使用 flash
   $_SESSION['flash'] = ['type' => 'success', 'title'=>'送出成功', 'text' => '您的諮詢已成功送出！我們將盡快與您聯繫。'];
-  header('Location: front.php');
+  header('Location: index.php');
   exit;
 
 } catch (Throwable $e) {
   if ($pdo->inTransaction()) $pdo->rollBack();
   app_log('consult_submit error: ' . $e->getMessage());
   $_SESSION['flash'] = ['type' => 'error', 'title'=>'提交失敗', 'text' => '提交失敗，請稍後再試。'];
-  header('Location: front.php');
+  header('Location: index.php');
   exit;
 }

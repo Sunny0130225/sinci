@@ -28,7 +28,7 @@ require 'db.php';
 <div class="container py-4">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h2>客戶清單</h2>
-    <a href="index.php" class="btn btn-outline-secondary">返回商品管理</a>
+    <a href="back.php" class="btn btn-outline-secondary">返回商品管理</a>
   </div>
 
   <div class="table-responsive">

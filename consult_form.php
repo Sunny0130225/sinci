@@ -4,7 +4,7 @@ require_once __DIR__ . '/session.php'; // ✅ 統一 session 安全設定
 
 $csrf = $_SESSION['csrf'] ?? '';
 if (!$csrf) {
-    header('Location: front.php');
+    header('Location: index.php');
     exit;
 }
 $cart = $_SESSION['consult_cart'] ?? [];
@@ -49,14 +49,14 @@ if ($cart) {
 <body class="bg-light">
   <div class="main-content">
   <nav class="navbar navbar-light  shadow-sm mb-3 px-3" style="background-color: #78affbff;">
-    <a class="navbar-brand" href="front.php">新彩商品目錄</a>
+    <a class="navbar-brand" href="index.php">新彩商品目錄</a>
 </nav>
 
 <div class="container py-4">
   <h3 class="mb-3">諮詢表單</h3>
 
   <?php if (!$items): ?>
-    <div class="alert alert-info">目前尚未加入任何商品。請回到<a href="front.php">商品頁</a>加入諮詢。</div>
+    <div class="alert alert-info">目前尚未加入任何商品。請回到<a href="index.php">商品頁</a>加入諮詢。</div>
   <?php else: ?>
     <!-- 清單可編輯 -->
     <form method="post" action="consult_update.php" class="card mb-3">
@@ -94,7 +94,7 @@ if ($cart) {
         </div>
         <div class="text-end">
           <button class="btn btn-sm btn-secondary">更新數量</button>
-          <a class="btn btn-sm btn-outline-secondary" href="front.php">繼續挑選</a>
+          <a class="btn btn-sm btn-outline-secondary" href="index.php">繼續挑選</a>
         </div>
       </div>
     </form>

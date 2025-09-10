@@ -16,7 +16,7 @@ $product = $stmt->fetch();
 
 if (!$product) {
     $_SESSION['flash'] = ['type' => 'warning', 'text' => '抱歉，該商品已不存在或已下架'];
-    header('Location: front.php');
+    header('Location: index.php');
     exit;;
 }
 
@@ -53,7 +53,7 @@ $consult_count = isset($_SESSION['consult_cart'])
 <body class="bg-light">
 
 <nav class="navbar navbar-light  shadow-sm mb-3 px-3" style="background-color: #78affbff;">
-    <a class="navbar-brand" href="front.php">新彩商品目錄</a>
+    <a class="navbar-brand" href="index.php">新彩商品目錄</a>
     <div class="ms-auto">
         <a href="consult_form.php" class="btn btn-primary">
             諮詢清單 <span class="badge bg-light text-dark"><?= (int)$consult_count ?></span>
@@ -90,7 +90,7 @@ $consult_count = isset($_SESSION['consult_cart'])
                 <input type="hidden" name="product_id" value="<?= (int)$product['id'] ?>">
                 <input type="number" name="qty" value="1" min="1"  max="<?= MAX_QTY ?>" class="form-control" style="max-width: 120px;">
                 <button type="submit" class="btn btn-primary">加入諮詢</button>
-                <a href="front.php" class="btn btn-outline-secondary">回商品列表</a>
+                <a href="index.php" class="btn btn-outline-secondary">回商品列表</a>
             </form>
         </div>
     </div>

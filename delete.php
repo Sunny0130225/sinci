@@ -37,5 +37,5 @@ if ($success) {
 } else {
     $_SESSION['message'] = '刪除失敗，請稍後再試。';
 }
-header('Location: index.php');
+header('Location: back.php');
 exit;

@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $_SESSION['message'] = '商品新增成功！';
-            header('Location: index.php');
+            header('Location: back.php');
             exit;
        
     } else {
@@ -114,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <button type="submit" class="btn btn-primary">新增商品</button>
-        <a href="index.php" class="btn btn-secondary">返回</a>
+        <a href="back.php" class="btn btn-secondary">返回</a>
     </form>
 </div>
 

@@ -26,7 +26,7 @@ $qty_in = filter_input(INPUT_POST, 'qty', FILTER_VALIDATE_INT, [
 
 if ($qty_in === false || $qty_in === null) {
     $_SESSION['flash'] = ['type' => 'warning', 'text' => '數量必須為 1-' . MAX_QTY . ' 之間的整數'];
-    header('Location: front.php', true, 303);
+    header('Location: index.php', true, 303);
     exit;
 }
 
@@ -34,7 +34,7 @@ $qty = $qty_in;
 
 if ($product_id <= 0) {
     $_SESSION['flash'] = ['type' => 'warning', 'text' => '商品參數有誤'];
-    header('Location: front.php', true, 303);
+    header('Location: index.php', true, 303);
     exit;
 }
 
@@ -51,7 +51,7 @@ try {
 
 if (!$product) {
     $_SESSION['flash'] = ['type' => 'warning', 'text' => '找不到該商品'];
-    header('Location: front.php', true, 303);
+    header('Location: index.php', true, 303);
     exit;
 }
 
@@ -71,7 +71,7 @@ if ($newTotal > MAX_QTY) {
     $_SESSION['flash'] = ['type' => 'warning', 'text' => "諮詢清單總數量不能超過 " . MAX_QTY . " 個，目前共有 {$totalQty} 個"];
     
     // 重導向邏輯
-    $target = 'front.php';
+    $target = 'index.php';
     if (!empty($_SERVER['HTTP_REFERER'])) {
         $refHost  = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
         $thisHost = $_SERVER['HTTP_HOST'] ?? '';
@@ -95,7 +95,7 @@ $name = (string)($product['name'] ?? '');
 $_SESSION['flash'] = ['type' => 'success', 'text' => "已加入「{$name}」 × {$qty}"];
 
 /* 7) 安全導回來源頁（只接受同網域），否則回列表 */
-$target = 'front.php';
+$target = 'index.php';
 if (!empty($_SERVER['HTTP_REFERER'])) {
     $refHost  = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
     $thisHost = $_SERVER['HTTP_HOST'] ?? '';

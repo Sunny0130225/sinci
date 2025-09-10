@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row justify-content-center text-center">
       <div class="col-md-4">
-        <h5 class="fw-bold">新彩實業國際有限公司</h5>
+        <h5 class="fw-bold">新彩國際有限公司</h5>
       </div>
       <div class="col-md-4 text-start">
         <p class="mb-1">電話：02-82953456</p>

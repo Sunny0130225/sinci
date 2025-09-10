@@ -1,8 +1,8 @@
 <?php
 $host = 'localhost';
-$db   = 'sinci'; // 資料庫名稱
-$user = 'sinci';
-$pass = 'keli568';
+$db   = 'vhost160223'; // 資料庫名稱
+$user = 'vhost160223';
+$pass = 'kEILI53701728';
 $charset = 'utf8mb4';
 
 // 建立 PDO 連線
