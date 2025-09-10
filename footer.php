@@ -39,7 +39,7 @@ if (!isset($_SESSION['page_counted'])) {
                 <div class="col-md-8 col-12" style="display:flex;justify-content:center">
                     <div class="row">
                         <div class="col-12 mb-2">
-                            <h5 class="fw-bold">新彩實業國際有限公司</h5>
+                            <h5 class="fw-bold">新彩國際有限公司</h5>
                         </div>
                         <div class="col-12">
                           <p class="mb-1">24小時服務專線：0912 550 099</p>
