@@ -32,7 +32,7 @@ if (mb_strlen($q, 'UTF-8') > 50) {
 }
 
 $metaDescription = "新彩是免洗餐具行，我們提供清潔用品、免洗餐具、防疫商品等高品質產品。";
-$pageTitle = "新彩免洗餐具行清潔用品批發|台北新北桃園全省清潔用品批發|大量現貨快速出貨";
+$pageTitle = "台北新北桃園全省清潔用品批發|新彩免洗餐具行清潔用品批發|大量現貨快速出貨";
 
 /** 逃脫 LIKE 萬用字元，並包裝成 %keyword% */
 function like_param($s) {
@@ -173,13 +173,14 @@ $consult_count = isset($_SESSION['consult_cart'])
   : 0;
 ?>
 <nav class="navbar navbar-light shadow-sm mb-3 px-3" style="background-color: #78affbff;">
-  <a class="navbar-brand" href="index.php">新彩商品目錄</a>
+  <a class="navbar-brand" href="index.php">新彩清潔用品</a>
   <div class="ms-auto">
     <a href="consult_form.php" class="btn btn-primary">
       諮詢清單 <span class="badge bg-light text-dark"><?= (int)$consult_count ?></span>
     </a>
   </div>
 </nav>
+<div class="navbar navbar-light shadow-sm mb-3 px-3" style="background-color: #edeebfff; border-radius: 20px;">滿1000元免費配送到府✅歡迎點擊商品加入諮詢清單✅或底下加入Line官方客服，讓我們為您提供專業服務！</div>
 
 <div class="container-fluid py-4  main-content">
   <div class="row">
@@ -237,7 +238,7 @@ $consult_count = isset($_SESSION['consult_cart'])
               <?php if (!empty($p['image'])): ?>
                 <img src="<?= htmlspecialchars($p['image'], ENT_QUOTES, 'UTF-8') ?>" class="card-img-top"
                      alt="<?= htmlspecialchars($p['name'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
-                     style="object-fit: cover; height: 200px;" loading="lazy">
+                     style="object-fit: cover; height: 500px;" loading="lazy">
               <?php else: ?>
                 <div class="card-img-top bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 200px;">無圖片</div>
               <?php endif; ?>
