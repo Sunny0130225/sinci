@@ -1,0 +1,2 @@
+推薦商品 資料庫調整
+ALTER TABLE product ADD COLUMN is_featured TINYINT(1) DEFAULT 0;

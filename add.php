@@ -12,7 +12,7 @@ $category_options = [
     "紙類用品" => ["抽取式衛生紙","面紙", "捲筒式衛生紙","餐巾紙","擦手紙","廚房紙巾", "濕紙巾","餐墊紙","紙毛巾"],
     "清潔用品" => [ "洗手乳","沙拉脫/漂白水","除油靈","廚房清潔劑", "廁所清潔劑","玻璃清潔劑", "地板清潔劑","萬用清潔劑","妙管家系列","其他(掃除用具)"],
     "垃圾袋" => ["箱裝好抽取垃圾袋","捲式垃圾袋","牛皮紙袋經濟大包裝"],
-    "紙杯/免洗餐具" => ["紙杯", "油力士紙杯","免洗餐具/盒"],
+    "紙杯/免洗餐具" => ["紙杯", "食品級透明飲料杯","免洗餐具/盒"],
     "防疫專區" => ["口罩", "酒精","手部消毒機"],
     "燃料類" => ["酒精膏", "瓦斯罐/爐", "酒精塊","火罐頭","其他"],
     "芳香/除臭用品" => ["芳香除臭劑", "芳香噴霧機","小便斗除臭芳香清潔"],
@@ -28,36 +28,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $main_category = $_POST['main_category'] ?? '';
     $sub_category = $_POST['sub_category'] ?? '';
     $category = "$main_category - $sub_category";
+    $is_featured = isset($_POST['is_featured']) ? 1 : 0;
 
     if ($name  && $main_category && $sub_category) {
-      
-            $stmt = $pdo->prepare("INSERT INTO product (name, description, category) VALUES (?, ?, ?)");
-            $stmt->execute([$name, $description, $category]);
-            $id = $pdo->lastInsertId();
+        $stmt = $pdo->prepare("INSERT INTO product (name, description, category, is_featured) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$name, $description, $category, $is_featured]);
+        $id = $pdo->lastInsertId();
 
-            if (!empty($_FILES['image']['tmp_name'])) {
-                 // 在這裡加入資料夾檢查
-    if (!is_dir('uploads')) {
-        mkdir('uploads', 0755, true);
-    }
-                $original_name = $_FILES['image']['name'];
-                $tmp = $_FILES['image']['tmp_name'];
-                $ext = strtolower(pathinfo($original_name, PATHINFO_EXTENSION));
-                $image_path = "uploads/{$id}." . $ext;
-
-                if (move_uploaded_file($tmp, $image_path)) {
-                    echo "<script>console.log('✅ 圖片成功上傳至 {$image_path}');</script>";
-                    $stmt = $pdo->prepare("UPDATE product SET image = ? WHERE id = ?");
-                    $stmt->execute([$image_path, $id]);
-                } else {
-                    echo "<script>console.error('❌ move_uploaded_file 失敗');</script>";
-                }
+        if (!empty($_FILES['image']['tmp_name'])) {
+             // 在這裡加入資料夾檢查
+            if (!is_dir('uploads')) {
+                mkdir('uploads', 0755, true);
             }
+            $original_name = $_FILES['image']['name'];
+            $tmp = $_FILES['image']['tmp_name'];
+            $ext = strtolower(pathinfo($original_name, PATHINFO_EXTENSION));
+            $image_path = "uploads/{$id}." . $ext;
 
-            $_SESSION['message'] = '商品新增成功！';
-            header('Location: back.php');
-            exit;
-       
+            if (move_uploaded_file($tmp, $image_path)) {
+                echo "<script>console.log('✅ 圖片成功上傳至 {$image_path}');</script>";
+                $stmt = $pdo->prepare("UPDATE product SET image = ? WHERE id = ?");
+                $stmt->execute([$image_path, $id]);
+            } else {
+                echo "<script>console.error('❌ move_uploaded_file 失敗');</script>";
+            }
+        }
+
+        $_SESSION['message'] = '商品新增成功！';
+        header('Location: back.php');
+        exit;
+   
     } else {
         $error = '請填寫所有欄位。';
     }
@@ -71,6 +71,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>新增商品</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .featured-highlight {
+            background-color: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 15px;
+        }
+    </style>
 </head>
 <body class="bg-light">
 <div class="container py-4">
@@ -108,6 +116,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <textarea name="description" class="form-control" rows="3"></textarea>
         </div>
 
+        <!-- 推薦商品設定 -->
+        <div class="mb-4">
+            <div id="featured-container" class="border rounded p-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="is_featured" id="is_featured" value="1">
+                    <label class="form-check-label fw-bold" for="is_featured">
+                        <span class="badge bg-warning text-dark me-2">★</span>設為推薦商品
+                    </label>
+                    <div class="form-text mt-2">
+                        <i class="bi bi-info-circle"></i>
+                        推薦商品會優先顯示在商品列表最前面，提高曝光度
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="mb-3">
             <label class="form-label">上傳圖片</label>
             <input type="file" name="image" accept="image/*" class="form-control">
@@ -133,6 +157,16 @@ document.getElementById('main_category').addEventListener('change', function () 
             option.textContent = item;
             subSelect.appendChild(option);
         });
+    }
+});
+
+// 推薦商品勾選框變化效果
+document.getElementById('is_featured').addEventListener('change', function(e) {
+    const container = document.getElementById('featured-container');
+    if (e.target.checked) {
+        container.className = 'featured-highlight';
+    } else {
+        container.className = 'border rounded p-3';
     }
 });
 </script>

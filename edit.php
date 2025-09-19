@@ -11,7 +11,7 @@ $category_options = [
     "紙類用品" => ["抽取式衛生紙","面紙", "捲筒式衛生紙","餐巾紙","擦手紙","廚房紙巾", "濕紙巾","餐墊紙","紙毛巾"],
     "清潔用品" => [ "洗手乳","沙拉脫/漂白水","除油靈","廚房清潔劑", "廁所清潔劑","玻璃清潔劑", "地板清潔劑","萬用清潔劑","妙管家系列","其他(掃除用具)"],
     "垃圾袋" => ["箱裝好抽取垃圾袋","捲式垃圾袋","牛皮紙袋經濟大包裝"],
-    "紙杯/免洗餐具" => ["紙杯", "油力士紙杯","免洗餐具/盒"],
+    "紙杯/免洗餐具" => ["紙杯", "食品級透明飲料杯","免洗餐具/盒"],
     "防疫專區" => ["口罩", "酒精","手部消毒機"],
     "燃料類" => ["酒精膏", "瓦斯罐/爐", "酒精塊","火罐頭","其他"],
     "芳香/除臭用品" => ["芳香除臭劑", "芳香噴霧機","小便斗除臭芳香清潔"],
@@ -47,14 +47,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $main_category = $_POST['main_category'] ?? '';
     $sub_category = $_POST['sub_category'] ?? '';
     $category = "$main_category - $sub_category";
+    $is_featured = isset($_POST['is_featured']) ? 1 : 0;
 
     if ($name && isset($category_options[$main_category]) && in_array($sub_category, $category_options[$main_category])) {
         $success = true;
         $error = '';
         
         // 更新商品資料
-        $stmt = $pdo->prepare("UPDATE product SET name = ?, description = ?, category = ? WHERE id = ?");
-        if (!$stmt->execute([$name, $description, $category, $id])) {
+        $stmt = $pdo->prepare("UPDATE product SET name = ?, description = ?, category = ?, is_featured = ? WHERE id = ?");
+        if (!$stmt->execute([$name, $description, $category, $is_featured, $id])) {
             $success = false;
             $error = '商品資料更新失敗';
         }
@@ -158,6 +159,12 @@ $product = $stmt->fetch();
             border-radius: 4px;
             padding: 4px;
         }
+        .featured-highlight {
+            background-color: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 15px;
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -199,6 +206,23 @@ $product = $stmt->fetch();
         <div class="mb-3">
             <label class="form-label">描述</label>
             <textarea name="description" class="form-control" rows="3" placeholder="請輸入商品描述..."><?= htmlspecialchars($product['description']) ?></textarea>
+        </div>
+
+        <!-- 推薦商品設定 -->
+        <div class="mb-4">
+            <div class="<?= (isset($product['is_featured']) && $product['is_featured']) ? 'featured-highlight' : 'border rounded p-3' ?>">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="is_featured" id="is_featured" value="1" 
+                           <?= (isset($product['is_featured']) && $product['is_featured']) ? 'checked' : '' ?>>
+                    <label class="form-check-label fw-bold" for="is_featured">
+                        <span class="badge bg-warning text-dark me-2">★</span>設為推薦商品
+                    </label>
+                    <div class="form-text mt-2">
+                        <i class="bi bi-info-circle"></i>
+                        推薦商品會優先顯示在商品列表最前面，提高曝光度
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="mb-3">
@@ -255,6 +279,16 @@ function populateSub() {
 
 mainSelect.addEventListener('change', populateSub);
 populateSub(); // 初始載入
+
+// 推薦商品勾選框變化效果
+document.getElementById('is_featured').addEventListener('change', function(e) {
+    const container = e.target.closest('.mb-4').querySelector('div');
+    if (e.target.checked) {
+        container.className = 'featured-highlight';
+    } else {
+        container.className = 'border rounded p-3';
+    }
+});
 
 // 檔案選擇預覽
 document.querySelector('input[type="file"]').addEventListener('change', function(e) {
