@@ -72,10 +72,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             if ($success) {
-                // 檢查檔案大小 (例如限制 5MB)
-                if ($_FILES['image']['size'] > 5 * 1024 * 1024) {
+                // 檢查檔案大小 (限制 10MB)
+                if ($_FILES['image']['size'] > 10 * 1024 * 1024) {
                     $success = false;
-                    $error = '檔案大小不能超過 5MB';
+                    $error = '檔案大小不能超過 10MB';
                 }
 
                 // 檢查檔案類型
@@ -228,7 +228,7 @@ $product = $stmt->fetch();
         <div class="mb-3">
             <label class="form-label">商品圖片</label>
             <input type="file" name="image" accept="image/*" class="form-control">
-            <div class="form-text">支援格式：JPG, PNG, GIF, WebP。檔案大小限制：5MB</div>
+            <div class="form-text">支援格式：JPG, PNG, GIF, WebP。檔案大小限制：10MB</div>
             
             <div class="mt-3">
                 <label class="form-label">目前圖片：</label>
@@ -294,9 +294,9 @@ document.getElementById('is_featured').addEventListener('change', function(e) {
 document.querySelector('input[type="file"]').addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (file) {
-        // 檢查檔案大小
-        if (file.size > 5 * 1024 * 1024) {
-            alert('檔案大小不能超過 5MB');
+        // 檢查檔案大小 (改為10MB)
+        if (file.size > 10 * 1024 * 1024) {
+            alert('檔案大小不能超過 10MB');
             e.target.value = '';
             return;
         }

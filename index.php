@@ -180,7 +180,7 @@ $consult_count = isset($_SESSION['consult_cart'])
     </a>
   </div>
 </nav>
-<div class="navbar navbar-light shadow-sm mb-3 px-3" style="background-color: #edeebfff; border-radius: 20px;">滿1000元免費配送到府✅歡迎點擊商品加入諮詢清單✅或底下加入Line官方客服，讓我們為您提供專業服務！</div>
+<div class="navbar navbar-light shadow-sm mb-3 px-3" style="background-color: #edeebfff; border-radius: 20px;">滿1000元免運配送到府，貨到付款✅歡迎點擊商品加入諮詢清單✅或底下加入Line官方客服，讓我們為您提供專業服務！</div>
 
 <div class="container-fluid py-4  main-content">
   <div class="row">
