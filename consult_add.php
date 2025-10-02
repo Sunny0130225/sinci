@@ -55,7 +55,7 @@ if (!$product) {
     exit;
 }
 
-/* 5) 放進 session 諮詢清單（有上限保護） */
+/* 5) 放進 session 詢價清單（有上限保護） */
 if (!isset($_SESSION['consult_cart'])) {
     $_SESSION['consult_cart'] = [];
 }
@@ -68,7 +68,7 @@ $current = (int)($_SESSION['consult_cart'][$product_id]['qty'] ?? 0);
 $newTotal = $totalQty - $current + $current + $qty; // 等於 $totalQty + $qty
 if ($newTotal > MAX_QTY) {
     $name = (string)($product['name'] ?? '');
-    $_SESSION['flash'] = ['type' => 'warning', 'text' => "諮詢清單總數量不能超過 " . MAX_QTY . " 個，目前共有 {$totalQty} 個"];
+    $_SESSION['flash'] = ['type' => 'warning', 'text' => "詢價清單總數量不能超過 " . MAX_QTY . " 個，目前共有 {$totalQty} 個"];
     
     // 重導向邏輯
     $target = 'index.php';

@@ -173,14 +173,15 @@ $consult_count = isset($_SESSION['consult_cart'])
   : 0;
 ?>
 <nav class="navbar navbar-light shadow-sm mb-3 px-3" style="background-color: #78affbff;">
-  <a class="navbar-brand" href="index.php">新彩清潔用品</a>
+  <a class="navbar-brand" href="index.php"><img src="logo/logo.jpg" alt="新彩清潔用品大批發" style="height: 50px;"></a>
+  
   <div class="ms-auto">
     <a href="consult_form.php" class="btn btn-primary">
-      諮詢清單 <span class="badge bg-light text-dark"><?= (int)$consult_count ?></span>
+      詢價清單 <span class="badge bg-light text-dark"><?= (int)$consult_count ?></span>
     </a>
   </div>
 </nav>
-<div class="navbar navbar-light shadow-sm mb-3 px-3" style="background-color: #edeebfff; border-radius: 20px;">滿1000元免運配送到府，貨到付款✅歡迎點擊商品加入諮詢清單✅或底下加入Line官方客服，讓我們為您提供專業服務！</div>
+<div class="navbar navbar-light shadow-sm mb-3 px-3" style="background-color: #edeebfff; border-radius: 20px;">滿1000元免運配送到府，貨到付款✅歡迎點擊商品加入詢價清單✅或底下加入Line官方客服，讓我們為您提供專業服務！</div>
 
 <div class="container-fluid py-4  main-content">
   <div class="row">
@@ -264,7 +265,7 @@ $consult_count = isset($_SESSION['consult_cart'])
                   <input type="hidden" name="product_id" value="<?= (int)$p['id'] ?>">
                   <input type="number" name="qty" value="1" min="1" max="999" step="1"
                          class="form-control form-control-sm" style="max-width: 90px;">
-                  <button type="submit" class="btn btn-sm btn-outline-primary">加入諮詢</button>
+                  <button type="submit" class="btn btn-sm btn-outline-primary">詢價</button>
                 </form>
               </div>
             </div>

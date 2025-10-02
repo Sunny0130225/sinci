@@ -25,7 +25,7 @@ $metaDescription = mb_substr(strip_tags($product['description'] ?? ''), 0, 120, 
 
 // 需要定義並使用相同的上限
 const MAX_QTY = 999; // 與 consult_add.php 保持一致
-// 計算諮詢清單數量
+// 計算詢價清單數量
 $consult_count = isset($_SESSION['consult_cart'])
     ? array_sum(array_column($_SESSION['consult_cart'], 'qty'))
     : 0;
@@ -56,7 +56,7 @@ $consult_count = isset($_SESSION['consult_cart'])
     <a class="navbar-brand" href="index.php">新彩商品目錄</a>
     <div class="ms-auto">
         <a href="consult_form.php" class="btn btn-primary">
-            諮詢清單 <span class="badge bg-light text-dark"><?= (int)$consult_count ?></span>
+            詢價清單 <span class="badge bg-light text-dark"><?= (int)$consult_count ?></span>
         </a>
     </div>
 </nav>
@@ -84,12 +84,17 @@ $consult_count = isset($_SESSION['consult_cart'])
                 <h5>商品描述</h5>
                 <p><?= nl2br(htmlspecialchars($product['description'])) ?></p>
             </div>
+            <div style="background-color: #c4dbf1ff; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
+                <p class="mb-2">加新彩LINE好友詢價</p>
+                <p class="mb-2">(或用電話號碼0912 550 099加入)</p>
+                <img src="uploads/LINE.jpg" alt="LINE條碼" class="img-fluid" style="max-width: 150px;">
+            </div>
 
             <form method="post" action="consult_add.php" class="d-flex gap-2">
                 <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'] ?? '') ?>">
                 <input type="hidden" name="product_id" value="<?= (int)$product['id'] ?>">
                 <input type="number" name="qty" value="1" min="1"  max="<?= MAX_QTY ?>" class="form-control" style="max-width: 120px;">
-                <button type="submit" class="btn btn-primary">加入諮詢</button>
+                <button type="submit" class="btn btn-primary">詢價</button>
                 <a href="index.php" class="btn btn-outline-secondary">回商品列表</a>
             </form>
         </div>

@@ -32,7 +32,7 @@ if ($cart) {
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8">
-  <title>諮詢表單</title>
+  <title>詢價表單</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <style>
@@ -53,10 +53,10 @@ if ($cart) {
 </nav>
 
 <div class="container py-4">
-  <h3 class="mb-3">諮詢表單</h3>
+  <h3 class="mb-3">詢價表單</h3>
 
   <?php if (!$items): ?>
-    <div class="alert alert-info">目前尚未加入任何商品。請回到<a href="index.php">商品頁</a>加入諮詢。</div>
+    <div class="alert alert-info">目前尚未加入任何商品。請回到<a href="index.php">商品頁</a>詢價。</div>
   <?php else: ?>
     <!-- 清單可編輯 -->
     <form method="post" action="consult_update.php" class="card mb-3">
@@ -124,7 +124,7 @@ if ($cart) {
         </div>
       </div>
       <div class="card-footer text-end">
-        <button class="btn btn-primary">送出諮詢</button>
+        <button class="btn btn-primary">送出詢價</button>
       </div>
     </form>
   <?php endif; ?>

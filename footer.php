@@ -30,7 +30,7 @@ if (!isset($_SESSION['page_counted'])) {
      <div class="row align-items-center">
                 <!-- 左邊：Line條碼 -->
                 <div class="col-md-4 col-12 text-center mb-3 mb-md-0">
-                    <p class="mb-2">加新彩LINE好友</p>
+                    <p class="mb-2">加新彩LINE好友詢價</p>
                     <p class="mb-2">(或用電話號碼0912 550 099加入)</p>
                     <img src="uploads/LINE.jpg" alt="LINE條碼" class="img-fluid" style="max-width: 150px;">
                 </div>

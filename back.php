@@ -92,7 +92,7 @@ $categories = $category_stmt->fetchAll(PDO::FETCH_COLUMN);
     
     <!-- 操作按鈕 -->
     <div class="d-flex gap-2 mb-3">
-        <a href="customers.php" class="btn btn-outline-primary">諮詢清單</a>
+        <a href="customers.php" class="btn btn-outline-primary">詢價清單</a>
         <a href="add.php" class="btn btn-primary">➕ 新增商品</a>
     </div>
     
