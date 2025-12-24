@@ -4,22 +4,43 @@
 // 啟動Session
 require_once __DIR__ . '/session.php';
 
-// 計數器檔案路徑
-$counterFile = 'pageviews.txt';
+// 使用資料庫儲存瀏覽次數（需先建立 `counters` 資料表）
+require_once __DIR__ . '/db.php';
 
-// 讀取目前點閱數
-if (file_exists($counterFile)) {
-    $currentViews = (int)file_get_contents($counterFile);
-} else {
+$currentViews = 0;
+try {
+    $stmt = $pdo->prepare("SELECT value FROM counters WHERE name = ? LIMIT 1");
+    $stmt->execute(['page_views']);
+    $row = $stmt->fetch();
+    if ($row) {
+        $currentViews = (int)$row['value'];
+    } else {
+        $currentViews = 0;
+        $ins = $pdo->prepare("INSERT INTO counters (name, value, updated_at) VALUES (?, ?, NOW())");
+        $ins->execute(['page_views', $currentViews]);
+    }
+} catch (Exception $e) {
+    // 若 DB 發生錯誤，保守回退為 0，不阻塞頁面
     $currentViews = 0;
 }
 
 // 檢查這個瀏覽器是否已經計數過
 if (!isset($_SESSION['page_counted'])) {
-    // 第一次訪問，增加計數
-    $currentViews++;
-    file_put_contents($counterFile, $currentViews);
-    
+    try {
+        $pdo->beginTransaction();
+        $up = $pdo->prepare("UPDATE counters SET value = value + 1, updated_at = NOW() WHERE name = ?");
+        $up->execute(['page_views']);
+        $pdo->commit();
+
+        $stmt = $pdo->prepare("SELECT value FROM counters WHERE name = ? LIMIT 1");
+        $stmt->execute(['page_views']);
+        $currentViews = (int)$stmt->fetchColumn();
+    } catch (Exception $e) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+    }
+
     // 標記這個Session已經計數
     $_SESSION['page_counted'] = true;
     $_SESSION['visit_time'] = date('Y-m-d H:i:s');
